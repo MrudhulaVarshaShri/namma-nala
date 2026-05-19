@@ -5,28 +5,24 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 object IssueStorage {
+    private const val PREFS_NAME = "namma_nala_prefs"
+    private const val KEY_ISSUES = "issues_list"
+    private val gson = Gson()
 
-    private const val PREF_NAME = "issue_prefs"
-    private const val KEY = "issue_list"
-
-    fun save(context: Context, list: MutableList<Issue>) {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val json = Gson().toJson(list)
-        prefs.edit().putString(KEY, json).apply()
+    fun saveIssues(context: Context, issues: List<Issue>) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val json = gson.toJson(issues)
+        prefs.edit().putString(KEY_ISSUES, json).apply()
     }
 
-    fun load(context: Context): MutableList<Issue> {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val json = prefs.getString(KEY, null)
-
-        return if (json != null) {
+    fun loadIssues(context: Context): MutableList<Issue> {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val json = prefs.getString(KEY_ISSUES, null) ?: return mutableListOf()
+        return try {
             val type = object : TypeToken<MutableList<Issue>>() {}.type
-            Gson().fromJson(json, type)
-        } else {
+            gson.fromJson(json, type) ?: mutableListOf()
+        } catch (e: Exception) {
             mutableListOf()
         }
     }
 }
-
-
-

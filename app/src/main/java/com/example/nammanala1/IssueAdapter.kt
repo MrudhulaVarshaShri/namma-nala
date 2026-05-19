@@ -1,28 +1,60 @@
 package com.example.nammanala1
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nammanala1.databinding.ItemIssueBinding
 
-class IssueAdapter(private val list: List<String>) :
-    RecyclerView.Adapter<IssueAdapter.ViewHolder>() {
+class IssueAdapter(
+    private var issues: MutableList<Issue>,
+    private val onActionClick: (Issue) -> Unit
+) : RecyclerView.Adapter<IssueAdapter.IssueViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val text: TextView = itemView.findViewById(android.R.id.text1)
+    inner class IssueViewHolder(private val binding: ItemIssueBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(issue: Issue) {
+            binding.tvTitle.text = issue.title
+            binding.tvDesc.text = issue.description
+            binding.tvStatus.text = issue.status
+
+            if (issue.status == "Closed") {
+                binding.tvStatus.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, android.R.color.darker_gray)
+                )
+                binding.btnAction.isEnabled = false
+                binding.btnAction.text = "Resolved"
+            } else {
+                binding.tvStatus.setBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, android.R.color.holo_blue_light)
+                )
+                binding.btnAction.isEnabled = true
+                binding.btnAction.text = "Mark Closed"
+            }
+
+            binding.btnAction.setOnClickListener {
+                onActionClick(issue)
+            }
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IssueViewHolder {
+        val binding = ItemIssueBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return IssueViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = list.size
+    override fun onBindViewHolder(holder: IssueViewHolder, position: Int) {
+        holder.bind(issues[position])
+    }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.text.text = list[position]
+    override fun getItemCount(): Int = issues.size
+
+    fun updateData(newIssues: List<Issue>) {
+        issues.clear()
+        issues.addAll(newIssues)
+        notifyDataSetChanged()
     }
 }
-

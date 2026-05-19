@@ -12,7 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NammaNala1">
 
-        <!-- ✅ HOME SCREEN (ENTRY POINT) -->
         <activity
             android:name=".HomeActivity"
             android:exported="true">
@@ -22,17 +21,16 @@
             </intent-filter>
         </activity>
 
-        <!-- ➕ Add Issue Screen -->
         <activity
             android:name=".AddIssueActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Add New Issue" />
 
-        <!-- 📋 Issue List Screen -->
         <activity
             android:name=".IssueListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Community Issues" />
 
-        <!-- (Optional: keep MainActivity but NOT launcher) -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
